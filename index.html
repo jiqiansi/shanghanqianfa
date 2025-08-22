@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伤寒钤法排盘系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="app.css">
+    <style>
+        #easter-egg {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            animation: growAndSpin 2s infinite;
+            color: #4CAF50;
+            font-size: 1em;
+        }
+        
+        @keyframes growAndSpin {
+            0% {
+                font-size: 1em;
+                transform: translate(-50%, -50%) rotate(0deg);
+                opacity: 0.5;
+            }
+            50% {
+                font-size: 8em;
+                transform: translate(-50%, -50%) rotate(180deg);
+                opacity: 1;
+                text-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
+            }
+            100% {
+                font-size: 1em;
+                transform: translate(-50%, -50%) rotate(360deg);
+                opacity: 0.5;
+            }
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+        
+        h1 {
+            cursor: pointer;
+            color: #2E8B57;
+            text-align: center;
+            padding: 20px;
+            user-select: none; /* 防止文字被选中 */
+            -webkit-tap-highlight-color: transparent; /* 去除移动端点击高亮 */
+        }
+        
+        h1:active {
+            color: #3CB371; /* 点击时颜色微变，替代默认高亮 */
+        }
+        
+        .click-counter {
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            user-select: none;
+        }
+        
+        /* 去除所有焦点轮廓 */
+        *:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div id="easter-egg">
+        <i class="fas fa-leaf"></i>
+    </div>
+    <div class="container">
+        <header>
+            <h1 id="title"><i class="fas fa-leaf"></i> 伤寒钤法排盘系统</h1>
+            <p class="subtitle">基于东汉张仲景《伤寒钤法》的排盘工具</p>
+        </header>
+        <div class="main-content">
+            <div class="input-section">
+                <h2><i class="fas fa-user-circle"></i> 基础信息</h2>
+                <div class="input-group">
+                    <label>年命干支（出生年）</label>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <select id="year-gan">
+                                <option value="甲">甲</option>
+                                <option value="乙">乙</option>
+                                <option value="丙">丙</option>
+                                <option value="丁">丁</option>
+                                <option value="戊">戊</option>
+                                <option value="己">己</option>
+                                <option value="庚">庚</option>
+                                <option value="辛">辛</option>
+                                <option value="壬">壬</option>
+                                <option value="癸">癸</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <select id="year-zhi">
+                                <option value="子">子</option>
+                                <option value="丑">丑</option>
+                                <option value="寅">寅</option>
+                                <option value="卯">卯</option>
+                                <option value="辰">辰</option>
+                                <option value="巳">巳</option>
+                                <option value="午">午</option>
+                                <option value="未">未</option>
+                                <option value="申">申</option>
+                                <option value="酉">酉</option>
+                                <option value="戌">戌</option>
+                                <option value="亥">亥</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>得病日干支</label>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <select id="day-gan">
+                                <option value="甲">甲</option>
+                                <option value="乙">乙</option>
+                                <option value="丙">丙</option>
+                                <option value="丁">丁</option>
+                                <option value="戊">戊</option>
+                                <option value="己">己</option>
+                                <option value="庚">庚</option>
+                                <option value="辛">辛</option>
+                                <option value="壬">壬</option>
+                                <option value="癸">癸</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <select id="day-zhi">
+                                <option value="子">子</option>
+                                <option value="丑">丑</option>
+                                <option value="寅">寅</option>
+                                <option value="卯">卯</option>
+                                <option value="辰">辰</option>
+                                <option value="巳">巳</option>
+                                <option value="午">午</option>
+                                <option value="未">未</option>
+                                <option value="申">申</option>
+                                <option value="酉">酉</option>
+                                <option value="戌">戌</option>
+                                <option value="亥">亥</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>性别</label>
+                    <select id="gender">
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+                
+                <button id="calculate-btn"><i class="fas fa-calculator"></i> 排盘计算</button>
+                
+                <div class="current-values">
+                    <div class="current-card">
+                        <h3>当前年命</h3>
+                        <div class="value" id="current-year"></div>
+                    </div>
+                    
+                    <div class="current-card">
+                        <h3>得病日干支</h3>
+                        <div class="value" id="current-day"></div>
+                    </div>
+                    
+                    <div class="current-card">
+                        <h3>性别</h3>
+                        <div class="value" id="current-gender">男</div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="pan-section">
+                <div class="pan-header">
+                    <div class="pan-header-item">
+                        <h3>司天</h3>
+                        <div class="value" id="si-tian"></div>
+                        <div></div>
+                    </div>
+                    <div class="pan-header-item">
+                        <h3>司地</h3>
+                        <div class="value" id="si-di"></div>
+                        <div></div>
+                    </div>
+                    <div class="pan-header-item">
+                        <h3>司人</h3>
+                        <div class="value" id="si-ren"></div>
+                        <div></div>
+                    </div>
+
+                </div>
+                
+                <h2><i class="fas fa-compass"></i> 天地盘</h2>              
+                <table class="pan-table">
+                    <tr>
+                        <td id="pos0">
+                            <span class="tianpan1" id="tian1-0"></span>
+                            <span class="tianpan2" id="tian2-0"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos1">
+                            <span class="tianpan1" id="tian1-1"></span>
+                            <span class="tianpan2" id="tian2-1"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos2">
+                            <span class="tianpan1" id="tian1-2"></span>
+                            <span class="tianpan2" id="tian2-2"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos3">
+                            <span class="tianpan1" id="tian1-3"></span>
+                            <span class="tianpan2" id="tian2-3"></span>
+                            <span class="dipan"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="pos4">
+                            <span class="tianpan1" id="tian1-4"></span>
+                            <span class="tianpan2 circle" id="tian2-4"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td class="center" colspan="2" rowspan="2">
+                            <div></div>
+                            <div class="sub"></div>
+                        </td>
+                        <td id="pos7">
+                            <span class="tianpan1" id="tian1-7"></span>
+                            <span class="tianpan2" id="tian2-7"></span>
+                            <span class="dipan"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="pos8">
+                            <span class="tianpan1" id="tian1-8"></span>
+                            <span class="tianpan2" id="tian2-8"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos11">
+                            <span class="tianpan1" id="tian1-11"></span>
+                            <span class="tianpan2" id="tian2-11"></span>
+                            <span class="dipan"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="pos12">
+                            <span class="tianpan1" id="tian1-12"></span>
+                            <span class="tianpan2" id="tian2-12"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos13">
+                            <span class="tianpan1" id="tian1-13"></span>
+                            <span class="tianpan2 circle" id="tian2-13"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos14">
+                            <span class="tianpan1" id="tian1-14"></span>
+                            <span class="tianpan2" id="tian2-14"></span>
+                            <span class="dipan"></span>
+                        </td>
+                        <td id="pos15">
+                            <span class="tianpan1" id="tian1-15"></span>
+                            <span class="tianpan2" id="tian2-15"></span>
+                            <span class="dipan"></span>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-color legend-tian1"></span>
+                        <span>天盘地支</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color legend-tian2"></span>
+                        <span>天盘天干</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-circle">〇</span>
+                        <span>空亡</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color legend-dipan"></span>
+                        <span>地盘</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2><i class="fas fa-pills"></i> 排盘结果</h2>
+                <div class="result-grid">
+                    <div class="result-card">
+                        <h3>六经病证</h3>
+                        <div class="result-value" id="disease-result"></div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>推算药号</h3>
+                        <div class="result-value" id="yaohao"></div>
+                    </div>
+                </div>
+                
+                <!-- 汗瘥法结果区域 -->
+                <div class="hancuo-result">
+                    <div class="hancuo-title">
+                        <i class="fas fa-heartbeat"></i>
+                        <h3>汗瘥法推算结果</h3>
+                    </div>
+                    
+                    <div class="hancuo-grid">
+                        <div class="hancuo-card">
+                            <div class="hancuo-value" id="table1-result"></div>
+                            <div class="result-desc">
+                                <strong>得病日干：</strong><span id="hancuo-day-gan"></span>，
+                                <strong>病证地支：</strong><span id="hancuo-disease-zhi"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="hancuo-card">
+                            <div class="hancuo-value" id="wuyun-result"></div>
+                            <div class="result-desc">
+                                <span id="hancuo-gan"></span> <span id="wuyun-desc"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="hancuo-card">
+                            <h4><i class="fas fa-calendar-check"></i> 汗瘥日期</h4>
+                            <div class="hancuo-days" id="hancuo-days">
+                                <div class="hancuo-day"></div>
+                                <div class="hancuo-day"></div>
+                            </div>
+                            <div class="result-desc">
+                                <strong>病证：</strong><span id="hancuo-disease"></span>，
+                                <strong>五运：</strong><span id="hancuo-wuyun"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hancuo-sentence" id="hancuo-sentence">
+                    
+                    </div>
+                </div>
+                
+                <!-- 棺墓法结果区域 -->
+                <div class="guanmu-result">
+                    <div class="guanmu-title">
+                        <i class="fas fa-book-medical"></i>
+                        <h3>棺墓法推算结果</h3>
+                    </div>
+                    
+                    <div class="guanmu-steps" id="guanmu-steps">
+                        <!-- 步骤内容将通过JS动态生成 -->
+                    </div>
+                    
+                    <div class="guanmu-final">
+                        <div class="guanmu-verse" id="guanmu-verse"></div>
+                        <div class="guanmu-interpretation" id="guanmu-interpretation"></div>
+                    </div>
+                </div>
+                
+                <!-- 主病行流法结果区域 -->
+                <div class="zhubing-result">
+                    <div class="zhubing-title">
+                        <i class="fas fa-book-medical"></i>
+                        <h3>主病行流法推算结果</h3>
+                    </div>
+                    
+                    <div class="zhubing-grid">
+                        <div class="zhubing-card">
+                            <h4><i class="fas fa-stethoscope"></i> 主病</h4>
+                            <div class="zhubing-value" id="zhubing-result"></div>
+                            <div class="zhubing-desc">
+                                <strong>主病脏腑：</strong><span id="zhubing-organs"></span><br>
+                                <strong>证候歌：</strong><span id="zhubing-song"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="zhubing-card">
+                            <h4><i class="fas fa-water"></i> 行流</h4>
+                            <div class="zhubing-value" id="xingliu-result"></div>
+                            <div class="zhubing-desc">
+                                <strong>行流脏腑：</strong><span id="xingliu-organs"></span><br>
+                                <strong>证候歌：</strong><span id="xingliu-song"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="zhubing-steps" id="zhubing-steps">
+                        <!-- 步骤内容将通过JS动态生成 -->
+                    </div>
+                    
+                    <div class="xieqi-result">
+                        <div class="xieqi-title">五邪判断</div>
+                        <div class="xieqi-content" id="xieqi-content"></div>
+                    </div>
+                </div>
+                
+                <!-- 示例说明 -->
+                <div class="example-section">
+                    <h4><i class="fas fa-lightbulb"></i> 更新说明</h4>
+                    <div class="example-grid">
+                        <div class="example-card">
+                            <h5>v0.1</h5>
+                            <p>添加了排药号和病症的功能</p>
+                        </div>
+                        <div class="example-card">
+                            <h5>v0.2</h5>
+                            <p>添加了汗瘥功能<br>优化界面设计</p>
+                        </div>
+                        <div class="example-card">
+                            <h5>v0.3</h5>
+                            <p>新增棺墓法功能<br>添加案例保存功能</p>
+                        </div>
+                        <div class="example-card">
+                            <h5>v0.4</h5>
+                            <p>新增主病行流法<br>完善五邪判断</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>本系统基于东汉张仲景《伤寒钤法》理论开发 | 暨乾司国学社＆风后朮院</p>
+            <p>开发者:小生风后 开源版<a href="support.html" style="color:#2c6e49;">赞助一下</a></p>
+            <p><i class="fas fa-exclamation-triangle"></i> 提示：实际用药请遵医嘱</p>
+        </footer>
+    </div>
+    <script src="js.js" class="value" id="start-ganzhi"></script>
+    <script src="notebook.js"></script>
+    <script id="click-count">
+        let clickCount = 0;
+        const title = document.getElementById('title');
+        const clickCountDisplay = document.getElementById('click-count');
+        const easterEgg = document.getElementById('easter-egg');
+        const overlay = document.getElementById('overlay');
+        
+        title.addEventListener('click', function() {
+            clickCount++;
+            clickCountDisplay.textContent = clickCount;
+            
+            if (clickCount === 5) {
+                overlay.style.display = 'block';
+                easterEgg.style.display = 'block';
+                
+                // 重置计数器
+                setTimeout(() => {
+                    clickCount = 0;
+                    clickCountDisplay.textContent = clickCount;
+                    overlay.style.display = 'none';
+                    easterEgg.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
